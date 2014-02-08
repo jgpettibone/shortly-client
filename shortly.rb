@@ -5,6 +5,7 @@ require 'digest/sha1'
 require 'pry'
 require 'uri'
 require 'open-uri'
+require 'tux'
 # require 'nokogiri'
 
 ###########################################################
