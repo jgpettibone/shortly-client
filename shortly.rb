@@ -5,6 +5,7 @@ require 'digest/sha1'
 require 'pry'
 require 'uri'
 require 'open-uri'
+require 'bcrypt'
 require 'tux'
 # require 'nokogiri'
 
@@ -48,6 +49,22 @@ end
 
 class Click < ActiveRecord::Base
     belongs_to :link, counter_cache: :visits
+end
+
+class User < ActiveRecord::Base
+  has_secure_password
+
+  def authenticate(password)
+    self.password == BCrypt::Engine.hash_secret(password, self.salt)
+  end
+
+  validates :username, presence: true, length: { maximum: 50 }
+  validates :password, length: { minimum: 6 }
+  before_create do |record|
+    record.salt = BCrypt::Engine.generate_salt
+    record.password_digest = BCrypt::Engine.hash_secret(record.password, record.salt)
+    record.token = Digest::SHA1.hexdigest record.to_s
+  end
 end
 
 ###########################################################

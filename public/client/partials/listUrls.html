@@ -1,4 +1,18 @@
-<div ng-repeat="link in links | orderBy: link.visits" class="link">
+<div ng-init="orderBy='visits'; reverse=true">
+<div>
+  <form>
+    <input type='search' ng-model='query' autofocus/>
+  </form>
+</div>
+<div>
+    <!-- <button ng-repeat="(key, value) in links[0]" ng-click="orderBy='{{ key }}'">{{ key }}</button> -->
+    <button ng-click="orderBy='visits'; reverse=!reverse">Visits</button>
+    <button ng-click="orderBy='title'; reverse=!reverse">Title</button>
+    <button ng-click="orderBy='created_at'; reverse=!reverse">Created At</button>
+    <button ng-click="orderBy='updated_at'; reverse=!reverse">Updated At</button>
+</div>
+<div ng-repeat="link in links | orderBy:orderBy:reverse | filter:query" class="link">
+  <!-- {{ link }} -->
   <img src="/redirect_icon.png"/>
   <div class="info">
     <div class="visits"><span class="count">{{ link.visits }}</span>Visits</div>
@@ -6,4 +20,5 @@
     <div class="original">{{ link.url }}</div>
     <a href="{{ link.base_url }}/{{ link.code }}">{{ link.base_url }}/{{ link.code }}</a>
   </div>
+</div>
 </div>
