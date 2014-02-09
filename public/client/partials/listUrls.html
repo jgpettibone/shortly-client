@@ -5,11 +5,7 @@
   </form>
 </div>
 <div>
-    <!-- <button ng-repeat="(key, value) in links[0]" ng-click="orderBy='{{ key }}'">{{ key }}</button> -->
-    <button ng-click="orderBy='visits'; reverse=!reverse">Visits</button>
-    <button ng-click="orderBy='title'; reverse=!reverse">Title</button>
-    <button ng-click="orderBy='created_at'; reverse=!reverse">Created At</button>
-    <button ng-click="orderBy='updated_at'; reverse=!reverse">Updated At</button>
+  <span ng-repeat="(key, value) in links[0]"><button ng-click="setOrderBy(key, reverse)">{{ key }}</button></span>
 </div>
 <div ng-repeat="link in links | orderBy:orderBy:reverse | filter:query" class="link">
   <!-- {{ link }} -->

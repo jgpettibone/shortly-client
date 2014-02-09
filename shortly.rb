@@ -55,10 +55,10 @@ class User < ActiveRecord::Base
   has_secure_password
 
   def authenticate(password)
-    self.password == BCrypt::Engine.hash_secret(password, self.salt)
+    self.password_digest == BCrypt::Engine.hash_secret(password, self.salt)
   end
 
-  validates :username, presence: true, length: { maximum: 50 }
+  validates :username, presence: true, length: { maximum: 50 }, uniqueness: true
   validates :password, length: { minimum: 6 }
   before_create do |record|
     record.salt = BCrypt::Engine.generate_salt
@@ -96,6 +96,28 @@ get '/:url' do
     raise Sinatra::NotFound if link.nil?
     link.clicks.create!
     redirect link.url
+end
+
+post '/login' do
+  data = JSON.parse request.body.read
+  user = User.find_by_username data['username']
+  if user.nil? or !user.authenticate data['password']
+    {token: ''}.to_json
+  else
+    {token: user.token}.to_json
+  end
+end
+
+post '/register' do
+  data = JSON.parse request.body.read
+  user = User.create( username: data['username'],
+                      password: data['password'],
+                      password_confirmation: data['passwordConfirmation'])
+  if user.errors.any?
+    {token: ''}.to_json
+  else
+    {token: user.token}.to_json
+  end
 end
 
 ###########################################################

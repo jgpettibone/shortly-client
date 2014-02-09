@@ -1,5 +1,5 @@
 var shortlyApp = angular.module('shortlyApp', [
-  'ngRoute'
+  'ngRoute', 'ngCookies'
 ]);
 
 shortlyApp.config(['$routeProvider',
@@ -13,6 +13,14 @@ shortlyApp.config(['$routeProvider',
       templateUrl: 'client/partials/createUrl.html',
       controller: 'UrlCreateCtrl'
     }).
+    when('/login', {
+      templateUrl: 'client/partials/login.html',
+      controller: 'LoginCtrl'
+    }).
+    when('/register', {
+      templateUrl: 'client/partials/register.html',
+      controller: 'RegisterCtrl'
+    }).
     otherwise({
       redirectTo: '/'
     });
@@ -25,6 +33,10 @@ shortlyApp.controller('UrlListCtrl', function($scope, $http) {
   }).then(function(obj){
     $scope.links = obj.data;
   });
+  $scope.setOrderBy = function(key, reverse) {
+    $scope.orderBy = key;
+    $scope.reverse = !reverse;
+  };
 });
 
 shortlyApp.controller('UrlCreateCtrl', function($scope, $http) {
@@ -35,6 +47,32 @@ shortlyApp.controller('UrlCreateCtrl', function($scope, $http) {
       data: {url: url}
     }).then(function(data){
       console.log(data);
+    });
+  };
+});
+
+shortlyApp.controller('LoginCtrl', function($scope, $http, $cookieStore) {
+  $scope.authenticate = function(username, password) {
+    $http({
+      method: 'POST',
+      url: '/login',
+      data: {username: username, password: password}
+    }).success(function(data){
+      $cookieStore.put('user', data.token);
+      console.log($cookieStore.get('user'));
+    });
+  };
+});
+
+shortlyApp.controller('RegisterCtrl', function($scope, $http, $cookieStore) {
+  $scope.register = function(username, password, passwordConfirmation) {
+    $http({
+      method: 'POST',
+      url: '/register',
+      data: {username: username, password: password, passwordConfirmation: passwordConfirmation}
+    }).success(function(data){
+      $cookieStore.put('user', data.token);
+      console.log($cookieStore.get('user'));
     });
   };
 });
