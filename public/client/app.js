@@ -3,11 +3,20 @@ var shortlyApp = angular.module('shortlyApp', [
 ]);
 
 shortlyApp.config(['$routeProvider',
-  function($routeProvider) {
+  function($routeProvider, $cookieStore) {
   $routeProvider.
-    when('/', {
-      templateUrl: 'client/partials/listUrls.html',
-      controller: 'UrlListCtrl'
+    when('/', function(){
+      if($cookieStore.get('user')){
+        return {
+          templateUrl: 'client/partials/listUrls.html',
+          controller: 'UrlListCtrl'
+        };
+      } else {
+        return {
+          templateUrl: 'client/partials/login.html',
+          controller: 'LoginCtrl'
+        };
+      }
     }).
     when('/create', {
       templateUrl: 'client/partials/createUrl.html',
@@ -76,4 +85,15 @@ shortlyApp.controller('RegisterCtrl', function($scope, $http, $cookieStore) {
     });
   };
 });
+
+// shortlyApp.service('UserService', function(){
+//   var currentUser;
+//   var self = this;
+//   this.setCurrentUser = function(user) {
+//     currentUser = user;
+//   };
+//   this.currentUser = function() {
+//     return currentUser;
+//   };
+// });
 
